@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>user用户发送消息模拟界面</title>
+	<script src="https://cdn.bootcss.com/socket.io/2.1.0/socket.io.js"></script>
+</head>
+<body>
+	
+	<div id="ctx" ></div>
+	<div style="margin-top:20%;width:50%;"><hr/></div>
+	<input id="send" type="button" value="send" onclick="send()" style="margin-left:40%;">
+	
+</body>
+</html>
+<script>
+	//初始化连接
+	var socket = io.connect('http://localhost:9999?agent=agent_001&&user=user_001');
+	
+	//登录离开事件
+	socket.on('connect', function() { console.log('连接') });
+	socket.on('disconnect', function() { console.log("断开") });
+
+	//发送消息给后端msg事件
+	function send(){
+		var parmas = {}
+		parmas.msg = "用户发送msg消息";
+		parmas.id=2;
+		socket.emit('msg', parmas);
+		
+		sendShow(parmas.msg);
+	}
+	
+	//收到后端消息事件
+	socket.on('msg', function(data) {
+		replyShow(data);
+	});
+	
+	//显示用户发送的消息
+	function sendShow(data){
+		var text = "<div style='color:green'>"+new Date() + ":" + data+"</div>";
+		document.getElementById("ctx").innerHTML += text;
+	}
+	
+	//显示用户收到的消息
+	function replyShow(data){
+		var text = "<div style='color:red'>"+new Date() + ":" + data+"</div>";
+		document.getElementById("ctx").innerHTML += text;
+	}
+
+</script>
+
